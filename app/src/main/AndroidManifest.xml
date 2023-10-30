@@ -12,7 +12,7 @@
             android:value="true" />
         <meta-data
             android:name="xposeddescription"
-            android:value="Backup All Apps which have allowBackup=false, it must be enabled for System Framework" />
+            android:value="Allow Backup All Apps" />
         <meta-data
             android:name="xposedminversion"
             android:value="82" />
