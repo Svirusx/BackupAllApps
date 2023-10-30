@@ -1,0 +1,1 @@
+-keep class com.svirusx.backupallapps.Xposed {public <methods>;}
