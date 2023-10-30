@@ -36,7 +36,28 @@ public class Xposed implements IXposedHookLoadPackage {
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) {
         try {
-          #TODO Add your code here.
+            if (!"android".equals(lpparam.packageName)) {
+                return;
+            }
+            XC_MethodHook backupAllApps = new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param)
+                        throws Throwable {
+                    PackageInfo packageInfo = (PackageInfo) param.getResult();
+                    if (packageInfo != null) {
+                        int flags = packageInfo.applicationInfo.flags;
+                        if ((flags & ApplicationInfo.FLAG_ALLOW_BACKUP) == 0) {
+                            flags |= ApplicationInfo.FLAG_ALLOW_BACKUP;
+                        }
+                        packageInfo.applicationInfo.flags = flags;
+                        param.setResult(packageInfo);
+                    }
+
+                }
+            };
+            XposedBridge.hookAllMethods(XposedHelpers.findClass(
+                    "com.android.server.pm.PackageManagerService",
+                    lpparam.classLoader), "getPackageInfo", backupAllApps);
         } catch (Throwable t) {
             XposedBridge.log(t);
         }
